@@ -9,7 +9,7 @@ public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Column(name = "Name")
     private String name;
@@ -30,7 +30,7 @@ public class Task {
     @JsonManagedReference
     private User user;
 
-    public Task(int id, String name, String description, boolean completed, Project project, User user) {
+    public Task(long id, String name, String description, boolean completed, Project project, User user) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -39,11 +39,11 @@ public class Task {
         this.user = user;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

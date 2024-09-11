@@ -10,7 +10,7 @@ public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Column(name = "Name")
     private String name;
@@ -29,7 +29,7 @@ public class Project {
     @JsonBackReference
     private List<User> usersList;
 
-    public Project(int id, String name, String description, boolean completed, List<Task> tasks, List<User> usersList) {
+    public Project(long id, String name, String description, boolean completed, List<Task> tasks, List<User> usersList) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -38,11 +38,11 @@ public class Project {
         this.usersList = usersList;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
