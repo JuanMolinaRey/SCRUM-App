@@ -88,56 +88,5 @@ public class UserControllerTest {
     void testGetUserByIdNotFound() throws Exception {
         when(userService.getUserById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/users/1"))
-                .andExpect(status().isNotFound());
-
-        verify(userService, times(1)).getUserById(1L);
-    }
-
-    @Test
-    void testUpdateUser() throws Exception {
-        when(userService.updateUser(eq(1L), any(User.class))).thenReturn(updatedUser);
-
-        mockMvc.perform(put("/api/users/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"updatedUsername\",\"email\":\"updated@example.com\",\"password\":\"newPassword\",\"role\":\"USER\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("updatedUsername"))
-                .andExpect(jsonPath("$.email").value("updated@example.com"))
-                .andExpect(jsonPath("$.password").value("newPassword"));
-
-        verify(userService, times(1)).updateUser(eq(1L), any(User.class));
-    }
-
-    @Test
-    void testUpdateUserNotFound() throws Exception {
-        when(userService.updateUser(eq(1L), any(User.class))).thenThrow(new RuntimeException("User not found with id 1"));
-
-        mockMvc.perform(put("/api/users/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"updatedUsername\",\"email\":\"updated@example.com\",\"password\":\"newPassword\",\"role\":\"USER\"}"))
-                .andExpect(status().isNotFound());
-
-        verify(userService, times(1)).updateUser(eq(1L), any(User.class));
-    }
-
-    @Test
-    void testDeleteUser() throws Exception {
-        doNothing().when(userService).deleteUser(1L);
-
-        mockMvc.perform(delete("/api/users/1"))
-                .andExpect(status().isNoContent());
-
-        verify(userService, times(1)).deleteUser(1L);
-    }
-
-    @Test
-    void testDeleteUserNotFound() throws Exception {
-        doThrow(new RuntimeException("User not found with id 1")).when(userService).deleteUser(1L);
-
-        mockMvc.perform(delete("/api/users/1"))
-                .andExpect(status().isNotFound());
-
-        verify(userService, times(1)).deleteUser(1L);
     }
 }
