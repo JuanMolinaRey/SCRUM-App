@@ -30,6 +30,10 @@ public class UserService {
     }
 
     public User updateUser(Long id, User userDetails) {
+        if (userDetails.getUsername() == null || userDetails.getUsername().isEmpty()) {
+            throw new IllegalArgumentException("Invalid user data");
+        }
+
         return iuserRepository.findById(id)
                 .map(user -> {
                     user.setUsername(userDetails.getUsername());

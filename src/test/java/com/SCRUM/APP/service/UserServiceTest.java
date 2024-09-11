@@ -27,6 +27,7 @@ public class UserServiceTest {
     private User existingUser;
     private User newUser;
     private User updatedUser;
+    private User invalidUser;
 
     @BeforeEach
     void setUp() {
@@ -36,7 +37,9 @@ public class UserServiceTest {
 
         newUser = new User(null, "testuser", "test@example.com", "password", ERole.USER, List.of(), List.of());
 
-        updatedUser = new User(null, "updatedUsername", "updated@example.com", "newPassword", ERole.USER, List.of(), List.of());
+        updatedUser = new User(1L, "updatedUsername", "updated@example.com", "newPassword", ERole.USER, List.of(), List.of());
+
+        invalidUser = new User(null, "", "invalidemail", "password", ERole.USER, List.of(), List.of());
     }
 
     @Test
