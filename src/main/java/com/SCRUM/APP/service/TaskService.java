@@ -6,27 +6,30 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
 
     private final ITaskRepository taskRepository;
 
-    public TaskService(ITaskRepository taskRepository){
+    public TaskService(ITaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
-    public Task createTask(Task task){
+    public Task createTask(Task task) {
         return taskRepository.save(task);
     }
-    public List<Task> getAllTasks(){
+
+    public List<Task> getAllTasks() {
         try {
             return taskRepository.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving all users");
         }
     }
-    public Optional<Task> getTaskById (Long id){
+
+    public Optional<Task> getTaskById(Long id) {
         try {
             return taskRepository.findById(id);
 
@@ -34,7 +37,22 @@ public class TaskService {
             throw new RuntimeException("Error retrieving user by id");
         }
     }
-    public Task updateTask (Task updatedTask){
+
+    public List<Task> getCompletedTasks() {
+        return getAllTasks()
+                .stream()
+                .filter(c -> c.isCompleted())
+                .collect(Collectors.toList());
+    }
+
+    public List<Task> getNotCompletedTasks() {
+        return getAllTasks()
+                .stream()
+                .filter(c -> !c.isCompleted())
+                .collect(Collectors.toList());
+    }
+
+    public Task updateTask(Task updatedTask) {
         Optional<Task> existingTask = taskRepository.findById(updatedTask.getId());
         if (existingTask.isPresent()) {
             Task task = existingTask.get();
@@ -43,12 +61,28 @@ public class TaskService {
             task.setCompleted(updatedTask.isCompleted());
             return taskRepository.save(task);
 
-        }return null;
+        }
+        return null;
     }
-    public void deleteTaskById(Long id){
+
+    public void deleteTaskById(Long id) {
         taskRepository.deleteById(id);
     }
-    public void deleteAllTasks(){
+
+    public void deleteAllTasks() {
         taskRepository.deleteAll();
     }
+
+    public boolean updateStatusAsPast(Long id) {
+        Optional<Task> taskOptional = taskRepository.findById(id);
+        if (taskOptional.isPresent()) {
+            Task task = taskOptional.get();
+            task.setCompleted(true);
+            taskRepository.save(task);
+            return true;
+        }
+        return false;
+    }
+
 }
+
