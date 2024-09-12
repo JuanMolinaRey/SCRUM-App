@@ -15,7 +15,8 @@ public class TaskDTO {
 
     public TaskDTO() {
     }
-    public TaskDTO(int id, String name, String description, boolean completed, Project project, User user) {
+
+    public TaskDTO(Long id, String name, String description, boolean completed, Project project, User user) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -24,11 +25,11 @@ public class TaskDTO {
         this.user = user;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
