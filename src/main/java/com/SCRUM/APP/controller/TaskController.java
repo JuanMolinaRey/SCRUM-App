@@ -5,6 +5,7 @@ import com.SCRUM.APP.dtos.task.TaskDTO;
 import com.SCRUM.APP.model.Task;
 import com.SCRUM.APP.service.TaskService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class TaskController {
         this.taskConverter = taskConverter;
     }
 
-    @PostMapping
+    @PostMapping (value= "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public TaskDTO createTask(@RequestBody TaskDTO taskDTO) {
         Task task = taskConverter.dtoToTask(taskDTO);
         Task createdTask = taskService.createTask(task);
@@ -50,6 +51,22 @@ public class TaskController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+    @GetMapping("/completed")
+    public ResponseEntity<List<TaskDTO>> getCompletedTasks() {
+        List<Task> completedTasks = taskService.getCompletedTasks();
+        List<TaskDTO> completedTaskDTOs = completedTasks.stream()
+                .map(taskConverter::taskToDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(completedTaskDTOs);
+    }
+    @GetMapping("/not_completed")
+    public ResponseEntity<List<TaskDTO>> getNotCompletedTasks() {
+        List<Task> notCompletedTasks = taskService.getNotCompletedTasks();
+        List<TaskDTO> notCompletedTaskDTOs = notCompletedTasks.stream()
+                .map(taskConverter::taskToDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(notCompletedTaskDTOs);
     }
 
     @PutMapping("/task/{id}")
