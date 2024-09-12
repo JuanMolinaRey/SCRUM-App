@@ -10,7 +10,6 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-
     private final IUserRepository iuserRepository;
 
     public UserService(IUserRepository iuserRepository) {

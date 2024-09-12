@@ -27,7 +27,7 @@ public class UserServiceTest {
     private User existingUser;
     private User newUser;
     private User updatedUser;
-    private User invalidUser;
+
 
     @BeforeEach
     void setUp() {
@@ -35,11 +35,10 @@ public class UserServiceTest {
 
         existingUser = new User(1L, "oldUsername", "oldemail@example.com", "oldPassword", ERole.USER, List.of(), List.of());
 
-        newUser = new User(null, "testuser", "test@example.com", "password", ERole.USER, List.of(), List.of());
+        newUser = new User(null, "testUser", "test@example.com", "password", ERole.USER, List.of(), List.of());
 
         updatedUser = new User(1L, "updatedUsername", "updated@example.com", "newPassword", ERole.USER, List.of(), List.of());
 
-        invalidUser = new User(null, "", "invalidemail", "password", ERole.USER, List.of(), List.of());
     }
 
     @Test
@@ -49,7 +48,7 @@ public class UserServiceTest {
         User createdUser = userService.createUser(newUser);
 
         assertNotNull(createdUser);
-        assertEquals("testuser", createdUser.getUsername());
+        assertEquals("testUser", createdUser.getUsername());
         verify(userRepository, times(1)).save(newUser);
     }
 

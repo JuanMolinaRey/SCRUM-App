@@ -10,7 +10,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -19,8 +18,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -37,7 +35,6 @@ public class UserControllerTest {
 
     private User validUser;
     private User updatedUser;
-    private User invalidUser;
 
     @BeforeEach
     public void setUp() {
@@ -45,39 +42,40 @@ public class UserControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
         objectMapper = new ObjectMapper();
 
-        // Setup test data
-        validUser = new User(1L, "testuser", "test@example.com", "password", ERole.USER, Collections.emptyList(), Collections.emptyList());
-        updatedUser = new User(1L, "updateduser", "updated@example.com", "newpassword", ERole.ADMIN, Collections.emptyList(), Collections.emptyList());
-        invalidUser = new User(null, "", "invalidemail", "password", ERole.USER, Collections.emptyList(), Collections.emptyList());
+        validUser = new User(1L, "testUser", "test@example.com", "password", ERole.USER, Collections.emptyList(), Collections.emptyList());
+        updatedUser = new User(1L, "updatedUser", "updated@example.com", "newPassword", ERole.ADMIN, Collections.emptyList(), Collections.emptyList());
+
     }
 
     @Test
     public void testCreateUser() throws Exception {
         given(userService.createUser(ArgumentMatchers.any(User.class))).willReturn(validUser);
 
-        mockMvc.perform(post("/api/users")
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/api/users/create")
+                        .contentType("application/json")
                         .content(objectMapper.writeValueAsString(validUser)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.username").value("testuser"));
+                .andExpect(jsonPath("$.id").value(validUser.getId()))
+                .andExpect(jsonPath("$.username").value(validUser.getUsername()))
+                .andExpect(jsonPath("$.email").value(validUser.getEmail()));
     }
 
     @Test
     public void testGetAllUsers() throws Exception {
         given(userService.getAllUsers()).willReturn(Collections.singletonList(validUser));
 
-        mockMvc.perform(get("/api/users"))
+        mockMvc.perform(get("/api/users/list"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].username").value("testuser"));
+                .andExpect(jsonPath("$[0].username").value("testUser"));
     }
 
     @Test
     public void testGetUserById() throws Exception {
         given(userService.getUserById(1L)).willReturn(Optional.of(validUser));
 
-        mockMvc.perform(get("/api/users/1"))
+        mockMvc.perform(get("/api/users/list/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("testuser"));
+                .andExpect(jsonPath("$.username").value("testUser"));
     }
 
     @Test
@@ -92,11 +90,11 @@ public class UserControllerTest {
     public void testUpdateUser() throws Exception {
         given(userService.updateUser(1L, updatedUser)).willReturn(updatedUser);
 
-        mockMvc.perform(put("/api/users/1")
+        mockMvc.perform(put("/api/users/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedUser)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("updateduser"));
+                .andExpect(jsonPath("$.username").value("updatedUser"));
     }
 
     @Test
@@ -113,7 +111,7 @@ public class UserControllerTest {
     public void testDeleteUser() throws Exception {
         doNothing().when(userService).deleteUser(1L);
 
-        mockMvc.perform(delete("/api/users/1"))
+        mockMvc.perform(delete("/api/users/delete/1"))
                 .andExpect(status().isNoContent());
     }
 
@@ -129,7 +127,7 @@ public class UserControllerTest {
     public void testGetAllUsersWhenNoUsers() throws Exception {
         given(userService.getAllUsers()).willReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/api/users"))
+        mockMvc.perform(get("/api/users/list"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
     }
