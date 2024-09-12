@@ -48,7 +48,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testCreateUser() throws Exception {
+    public void test_Create_User() throws Exception {
         given(userService.createUser(ArgumentMatchers.any(User.class))).willReturn(validUser);
 
         mockMvc.perform(post("/api/users/create")
@@ -61,7 +61,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetAllUsers() throws Exception {
+    public void test_Get_AllUsers() throws Exception {
         given(userService.getAllUsers()).willReturn(Collections.singletonList(validUser));
 
         mockMvc.perform(get("/api/users/list"))
@@ -70,7 +70,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetUserById() throws Exception {
+    public void test_Get_User_By_Id() throws Exception {
         given(userService.getUserById(1L)).willReturn(Optional.of(validUser));
 
         mockMvc.perform(get("/api/users/list/1"))
@@ -79,7 +79,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetUserByIdNotFound() throws Exception {
+    public void test_Get_User_By_Id_Not_Found() throws Exception {
         given(userService.getUserById(99L)).willReturn(Optional.empty());
 
         mockMvc.perform(get("/api/users/99"))
@@ -87,7 +87,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testUpdateUser() throws Exception {
+    public void test_Update_User() throws Exception {
         given(userService.updateUser(1L, updatedUser)).willReturn(updatedUser);
 
         mockMvc.perform(put("/api/users/update/1")
@@ -98,7 +98,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testUpdateUserNotFound() throws Exception {
+    public void test_Update_User_Not_Found() throws Exception {
         given(userService.updateUser(1L, updatedUser)).willThrow(new RuntimeException("User not found with id 1"));
 
         mockMvc.perform(put("/api/users/1")
@@ -108,7 +108,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testDeleteUser() throws Exception {
+    public void test_Delete_User() throws Exception {
         doNothing().when(userService).deleteUser(1L);
 
         mockMvc.perform(delete("/api/users/delete/1"))
@@ -116,7 +116,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testDeleteUserNotFound() throws Exception {
+    public void test_Delete_User_Not_Found() throws Exception {
         doThrow(new RuntimeException("User not found with id 1")).when(userService).deleteUser(1L);
 
         mockMvc.perform(delete("/api/users/1"))
@@ -124,7 +124,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetAllUsersWhenNoUsers() throws Exception {
+    public void test_Get_All_Users_When_No_Users() throws Exception {
         given(userService.getAllUsers()).willReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/users/list"))

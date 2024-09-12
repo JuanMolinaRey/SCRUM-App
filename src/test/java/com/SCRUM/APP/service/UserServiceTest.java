@@ -42,7 +42,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testCreateUser() {
+    void test_Create_User() {
         when(userRepository.save(any(User.class))).thenReturn(newUser);
 
         User createdUser = userService.createUser(newUser);
@@ -53,7 +53,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testGetAllUsers() {
+    void test_Get_All_Users() {
         when(userRepository.findAll()).thenReturn(List.of(existingUser, newUser));
 
         List<User> result = userService.getAllUsers();
@@ -64,7 +64,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testGetUserById() {
+    void test_Get_User_By_Id() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
 
         Optional<User> result = userService.getUserById(1L);
@@ -75,7 +75,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testGetUserByIdNotFound() {
+    void test_Get_User_By_Id_Not_Found() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         Optional<User> result = userService.getUserById(1L);
@@ -85,7 +85,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testUpdateUser() {
+    void test_Update_User() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);
 
@@ -106,7 +106,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testUpdateUserNotFound() {
+    void test_Update_User_Not_Found() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.updateUser(1L, updatedUser));
@@ -117,7 +117,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testDeleteUser() {
+    void test_Delete_User() {
         doNothing().when(userRepository).deleteById(1L);
 
         userService.deleteUser(1L);
@@ -126,7 +126,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testDeleteUserNotFound() {
+    void test_Delete_User_Not_Found() {
         doThrow(new RuntimeException("User not found with id 1")).when(userRepository).deleteById(1L);
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.deleteUser(1L));
