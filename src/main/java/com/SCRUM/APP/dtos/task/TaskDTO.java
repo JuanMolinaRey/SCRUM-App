@@ -10,8 +10,8 @@ public class TaskDTO {
         private String name;
         private String description;
         private boolean completed;
-        private Project project;
-        private User user;
+        private Long projectId;
+        private Long userId;
 
     public TaskDTO() {
     }
@@ -21,8 +21,8 @@ public class TaskDTO {
         this.name = name;
         this.description = description;
         this.completed = completed;
-        this.project = project;
-        this.user = user;
+        this.projectId = projectId;
+        this.userId = userId;
     }
 
     public Long getId() {
@@ -57,19 +57,9 @@ public class TaskDTO {
         this.completed = completed;
     }
 
-    public Project getProject() {
-        return project;
-    }
+    public Long getProjectId() { return projectId; }
+    public void setProjectId(Long projectId) { this.projectId = projectId; }
 
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 }
