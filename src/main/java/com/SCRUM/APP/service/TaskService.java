@@ -23,7 +23,7 @@ public class TaskService {
         try {
             return taskRepository.findAll();
         } catch (Exception e) {
-            throw new RuntimeException("Error retrieving all users")
+            throw new RuntimeException("Error retrieving all users");
         }
     }
     public Optional<Task> getTaskById (Long id){

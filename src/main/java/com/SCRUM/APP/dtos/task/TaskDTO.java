@@ -6,12 +6,13 @@ import com.SCRUM.APP.model.User;
 
 public class TaskDTO {
 
-        private int id;
+        private Long id;
         private String name;
         private String description;
         private boolean completed;
         private Project project;
         private User user;
+
     public TaskDTO() {
     }
     public TaskDTO(int id, String name, String description, boolean completed, Project project, User user) {
