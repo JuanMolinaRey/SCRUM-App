@@ -71,6 +71,37 @@ class TaskServiceTest {
 
         verify(taskRepository, times(1)).findById(1L);
     }
+    @Test
+    void testGetCompletedTasks() {
+        Task task1 = new Task(1L, "Task 1", "Description 1", false, null, null);
+        task1.setCompleted(true);
+
+        Task task2 = new Task(2L, "Task 2", "Description 2", true, null, null);
+        task2.setCompleted(false);
+
+        when(taskRepository.findAll()).thenReturn(Arrays.asList(task1, task2));
+
+        List<Task> completedTasks = taskService.getCompletedTasks();
+
+        assertEquals(1, completedTasks.size());
+        assertEquals(true, completedTasks.get(0).isCompleted());
+    }
+
+    @Test
+    void testGetNotCompletedTasks() {
+        Task task1 = new Task(1L, "Task 1", "Description 1", false, null, null);
+        task1.setCompleted(true);
+
+        Task task2 = new Task(2L, "Task 2", "Description 2", true, null, null);
+        task2.setCompleted(false);
+
+        when(taskRepository.findAll()).thenReturn(Arrays.asList(task1, task2));
+
+        List<Task> notCompletedTasks = taskService.getNotCompletedTasks();
+
+        assertEquals(1, notCompletedTasks.size());
+        assertEquals(false, notCompletedTasks.get(0).isCompleted());
+    }
 
 
     @Test
