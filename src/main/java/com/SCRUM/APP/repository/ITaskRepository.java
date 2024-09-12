@@ -5,8 +5,12 @@ import com.SCRUM.APP.model.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public interface ITaskRepository extends JpaRepository<Task, Long> {
-    Optional<Task> getTaskByStatus(Status status);
+    public List<Task> getCompletedTasks();
+    public List<Task> getNotCompletedTasks();
+    public boolean updateStatusAsPast(Long id);
 }
