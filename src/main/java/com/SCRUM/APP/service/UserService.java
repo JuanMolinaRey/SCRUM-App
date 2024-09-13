@@ -2,6 +2,7 @@ package com.SCRUM.APP.service;
 
 import com.SCRUM.APP.model.User;
 import com.SCRUM.APP.repository.IUserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,12 +12,15 @@ import java.util.Optional;
 public class UserService {
 
     private final IUserRepository iuserRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserService(IUserRepository iuserRepository) {
+    public UserService(IUserRepository iuserRepository, BCryptPasswordEncoder passwordEncoder) {
         this.iuserRepository = iuserRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User createUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return iuserRepository.save(user);
     }
 

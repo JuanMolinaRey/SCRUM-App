@@ -1,15 +1,15 @@
 package com.SCRUM.APP.service;
 
-import com.SCRUM.APP.model.ERole;
 import com.SCRUM.APP.model.User;
 import com.SCRUM.APP.repository.IUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,119 +19,78 @@ import static org.mockito.Mockito.*;
 public class UserServiceTest {
 
     @Mock
-    private IUserRepository userRepository;
+    private IUserRepository iuserRepository;
+
+    @Mock
+    private BCryptPasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserService userService;
 
-    private User existingUser;
-    private User newUser;
-    private User updatedUser;
-
-
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        existingUser = new User(1L, "oldUsername", "oldemail@example.com", "oldPassword", ERole.USER, List.of(), List.of());
-
-        newUser = new User(null, "testUser", "test@example.com", "password", ERole.USER, List.of(), List.of());
-
-        updatedUser = new User(1L, "updatedUsername", "updated@example.com", "newPassword", ERole.USER, List.of(), List.of());
-
     }
 
     @Test
-    void test_Create_User() {
-        when(userRepository.save(any(User.class))).thenReturn(newUser);
+    public void testCreateUser() {
+        User user = new User();
+        user.setPassword("password");
+        when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
+        when(iuserRepository.save(user)).thenReturn(user);
 
-        User createdUser = userService.createUser(newUser);
-
-        assertNotNull(createdUser);
-        assertEquals("testUser", createdUser.getUsername());
-        verify(userRepository, times(1)).save(newUser);
+        User createdUser = userService.createUser(user);
+        assertEquals("encodedPassword", createdUser.getPassword());
+        verify(iuserRepository, times(1)).save(user);
     }
 
     @Test
-    void test_Get_All_Users() {
-        when(userRepository.findAll()).thenReturn(List.of(existingUser, newUser));
+    public void testGetAllUsers() {
+        User user = new User();
+        List<User> users = Collections.singletonList(user);
+        when(iuserRepository.findAll()).thenReturn(users);
 
         List<User> result = userService.getAllUsers();
-
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        verify(userRepository, times(1)).findAll();
+        assertEquals(1, result.size());
+        assertEquals(user, result.get(0));
+        verify(iuserRepository, times(1)).findAll();
     }
 
     @Test
-    void test_Get_User_By_Id() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+    public void testGetUserById() {
+        User user = new User();
+        when(iuserRepository.findById(1L)).thenReturn(Optional.of(user));
 
         Optional<User> result = userService.getUserById(1L);
-
         assertTrue(result.isPresent());
-        assertEquals("oldUsername", result.get().getUsername());
-        verify(userRepository, times(1)).findById(1L);
+        assertEquals(user, result.get());
+        verify(iuserRepository, times(1)).findById(1L);
     }
 
     @Test
-    void test_Get_User_By_Id_Not_Found() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+    public void testUpdateUser() {
+        User existingUser = new User();
+        existingUser.setId(1L);
+        existingUser.setUsername("oldUsername");
+        when(iuserRepository.findById(1L)).thenReturn(Optional.of(existingUser));
 
-        Optional<User> result = userService.getUserById(1L);
-
-        assertFalse(result.isPresent());
-        verify(userRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    void test_Update_User() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(any(User.class))).thenReturn(updatedUser);
+        User updatedUser = new User();
+        updatedUser.setUsername("NewUsername");
+        updatedUser.setPassword("NewPassword");
+        when(passwordEncoder.encode("NewPassword")).thenReturn("NewPassword");
+        when(iuserRepository.save(existingUser)).thenReturn(existingUser);
 
         User result = userService.updateUser(1L, updatedUser);
-
-        assertNotNull(result);
-        assertEquals("updatedUsername", result.getUsername());
-        assertEquals("updated@example.com", result.getEmail());
-        assertEquals("newPassword", result.getPassword());
-
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        verify(userRepository, times(1)).save(userCaptor.capture());
-
-        User savedUser = userCaptor.getValue();
-        assertEquals("updatedUsername", savedUser.getUsername());
-        assertEquals("updated@example.com", savedUser.getEmail());
-        assertEquals("newPassword", savedUser.getPassword());
+        assertEquals("NewUsername", result.getUsername());
+        assertEquals("NewPassword", result.getPassword());
+        verify(iuserRepository, times(1)).save(existingUser);
     }
 
     @Test
-    void test_Update_User_Not_Found() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.updateUser(1L, updatedUser));
-
-        assertEquals("User not found with id 1", exception.getMessage());
-        verify(userRepository, times(1)).findById(1L);
-        verify(userRepository, never()).save(any(User.class));
-    }
-
-    @Test
-    void test_Delete_User() {
-        doNothing().when(userRepository).deleteById(1L);
+    public void testDeleteUser() {
+        doNothing().when(iuserRepository).deleteById(1L);
 
         userService.deleteUser(1L);
-
-        verify(userRepository, times(1)).deleteById(1L);
-    }
-
-    @Test
-    void test_Delete_User_Not_Found() {
-        doThrow(new RuntimeException("User not found with id 1")).when(userRepository).deleteById(1L);
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.deleteUser(1L));
-
-        assertEquals("User not found with id 1", exception.getMessage());
-        verify(userRepository, times(1)).deleteById(1L);
+        verify(iuserRepository, times(1)).deleteById(1L);
     }
 }

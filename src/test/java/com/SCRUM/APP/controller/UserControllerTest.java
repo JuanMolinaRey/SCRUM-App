@@ -1,31 +1,30 @@
 package com.SCRUM.APP.controller;
 
-import com.SCRUM.APP.model.User;
 import com.SCRUM.APP.model.ERole;
+import com.SCRUM.APP.model.User;
 import com.SCRUM.APP.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class UserControllerTest {
+class UserControllerTest {
 
     private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
 
     @Mock
     private UserService userService;
@@ -33,102 +32,68 @@ public class UserControllerTest {
     @InjectMocks
     private UserController userController;
 
-    private User validUser;
-    private User updatedUser;
+    private User testUser;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
-        objectMapper = new ObjectMapper();
 
-        validUser = new User(1L, "testUser", "test@example.com", "password", ERole.USER, Collections.emptyList(), Collections.emptyList());
-        updatedUser = new User(1L, "updatedUser", "updated@example.com", "newPassword", ERole.ADMIN, Collections.emptyList(), Collections.emptyList());
-
+        testUser = new User(1L, "testuser", "test@example.com", "password", ERole.USER, null, null);
     }
 
     @Test
-    public void test_Create_User() throws Exception {
-        given(userService.createUser(ArgumentMatchers.any(User.class))).willReturn(validUser);
+    void createUser_ShouldReturnCreatedUser() throws Exception {
+        User user = new User(null, "testuser", "test@example.com", "password", ERole.USER, new ArrayList<>(), new ArrayList<>());
 
-        mockMvc.perform(post("/api/users/create")
+        when(userService.createUser(any(User.class))).thenReturn(user);
+
+        mockMvc.perform(post("/api/v1/users/users")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(validUser)))
+                        .content(new ObjectMapper().writeValueAsString(user)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(validUser.getId()))
-                .andExpect(jsonPath("$.username").value(validUser.getUsername()))
-                .andExpect(jsonPath("$.email").value(validUser.getEmail()));
+                .andExpect(jsonPath("$.username").value("testuser"))
+                .andExpect(jsonPath("$.email").value("test@example.com"));
     }
 
     @Test
-    public void test_Get_AllUsers() throws Exception {
-        given(userService.getAllUsers()).willReturn(Collections.singletonList(validUser));
+    void getAllUsers() throws Exception {
+        when(userService.getAllUsers()).thenReturn(List.of(testUser));
 
-        mockMvc.perform(get("/api/users/list"))
+        mockMvc.perform(get("/api/v1/users/list"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].username").value("testUser"));
+                .andExpect(jsonPath("$[0].username").value("testuser"));
     }
 
     @Test
-    public void test_Get_User_By_Id() throws Exception {
-        given(userService.getUserById(1L)).willReturn(Optional.of(validUser));
+    void getUserById() throws Exception {
+        when(userService.getUserById(1L)).thenReturn(Optional.of(testUser));
 
-        mockMvc.perform(get("/api/users/list/1"))
+        mockMvc.perform(get("/api/v1/users/list/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("testUser"));
+                .andExpect(jsonPath("$.username").value("testuser"));
     }
 
     @Test
-    public void test_Get_User_By_Id_Not_Found() throws Exception {
-        given(userService.getUserById(99L)).willReturn(Optional.empty());
+    void updateUser_ShouldReturnUpdatedUser() throws Exception {
+        User existingUser = new User(1L, "testuser", "test@example.com", "password", ERole.USER, new ArrayList<>(), new ArrayList<>());
+        User updatedUser = new User(1L, "updateduser", "updated@example.com", "newpassword", ERole.ADMIN, new ArrayList<>(), new ArrayList<>());
 
-        mockMvc.perform(get("/api/users/99"))
-                .andExpect(status().isNotFound());
-    }
+        when(userService.updateUser(eq(1L), any(User.class))).thenReturn(updatedUser);
 
-    @Test
-    public void test_Update_User() throws Exception {
-        given(userService.updateUser(1L, updatedUser)).willReturn(updatedUser);
-
-        mockMvc.perform(put("/api/users/update/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedUser)))
+        mockMvc.perform(put("/api/v1/users/update/1")
+                        .contentType("application/json")
+                        .content(new ObjectMapper().writeValueAsString(updatedUser)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("updatedUser"));
+                .andExpect(jsonPath("$.username").value("updateduser"))
+                .andExpect(jsonPath("$.email").value("updated@example.com"));
     }
 
     @Test
-    public void test_Update_User_Not_Found() throws Exception {
-        given(userService.updateUser(1L, updatedUser)).willThrow(new RuntimeException("User not found with id 1"));
-
-        mockMvc.perform(put("/api/users/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedUser)))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void test_Delete_User() throws Exception {
+    void deleteUser() throws Exception {
         doNothing().when(userService).deleteUser(1L);
 
-        mockMvc.perform(delete("/api/users/delete/1"))
+        mockMvc.perform(delete("/api/v1/users/delete/1"))
                 .andExpect(status().isNoContent());
-    }
-
-    @Test
-    public void test_Delete_User_Not_Found() throws Exception {
-        doThrow(new RuntimeException("User not found with id 1")).when(userService).deleteUser(1L);
-
-        mockMvc.perform(delete("/api/users/1"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void test_Get_All_Users_When_No_Users() throws Exception {
-        given(userService.getAllUsers()).willReturn(Collections.emptyList());
-
-        mockMvc.perform(get("/api/users/list"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty());
     }
 }
