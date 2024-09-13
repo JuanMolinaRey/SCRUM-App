@@ -1,7 +1,6 @@
 package com.SCRUM.APP.controller;
 
-import com.SCRUM.APP.dtos.task.TaskConverter;
-import com.SCRUM.APP.dtos.task.TaskDTO;
+import com.SCRUM.APP.dtos.task.*;
 import com.SCRUM.APP.model.Task;
 import com.SCRUM.APP.service.TaskService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,6 +71,8 @@ class TaskControllerTest {
     private TaskDTO taskDTO1;
     private TaskDTO taskDTO2;
     private List<TaskDTO> taskList = new ArrayList<>();
+    private TaskDTOEntity taskDTOEntity1;
+    private TaskDTOEntity taskDTOEntity2;
 
     private Task task1;
     private Task task2;
@@ -81,12 +84,13 @@ class TaskControllerTest {
 
         mockController = MockMvcBuilders.standaloneSetup(taskController).build();
 
-        // Initialize TaskDTO objects and tasks
         taskDTO1 = new TaskDTO(1L, "Task 1", "First task", false, null, null);
         taskDTO2 = new TaskDTO(2L, "Task 2", "Second task", true, null, null);
         task1 = new Task(1L, "Task 1", "First task", false, null, null);
         task2 = new Task(2L, "Task 2", "Second task", true, null, null);
         taskList = List.of(taskDTO1, taskDTO2);
+        taskDTOEntity1 = new TaskDTOEntity(1L, "Task 1", "First task", false, null, null);
+        taskDTOEntity2 = new TaskDTOEntity(2L, "Task 2", "Second task", true, null, null);
 
         when(taskConverter.dtoToTask(any(TaskDTO.class))).thenReturn(task1);
         when(taskService.createTask(any(Task.class))).thenReturn(task1);
@@ -230,5 +234,66 @@ class TaskControllerTest {
 
         verify(taskService).deleteAllTasks();
     }
+    @Test
+    void createTaskEntity() throws Exception {
+        when(taskService.createTask(any(Task.class))).thenReturn(task1);
+        when(taskConverter.taskToDtoEntity(any(Task.class))).thenReturn(taskDTOEntity1);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String taskJson = objectMapper.writeValueAsString(taskDTOEntity1);
+
+        mockController.perform(post("/api/v1/tasks/create-entity")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(taskJson))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{"
+                        + "\"id\": 1,"
+                        + "\"name\": \"Task 1\","
+                        + "\"description\": \"First task\","
+                        + "\"completed\": false,"
+                        + "\"project\": {\"id\": 1},"
+                        + "\"user\": {\"id\": 1}"
+                        + "}"));
+    }
+    //I am getting a serialization problem with tests because user and project are entities in dto.
+    /*@Test
+    void createTask2() throws Exception {
+        // Mock service and converter responses
+        when(taskService.createTask(any(Task.class))).thenReturn(task1);
+        when(taskConverter.taskToDtoEntity(any(Task.class))).thenReturn(taskDTOEntity1);
+
+        // Create the JSON payload for the test
+        String taskJson = "{"
+                + "\"id\": 1,"
+                + "\"name\": \"Task 1\","
+                + "\"description\": \"First task\","
+                + "\"completed\": false"
+                + "}";
+
+        // Perform the POST request
+        ResultActions resultActions = mockController.perform(post("/api/v1/tasks/create-entity")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(taskJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(print()); // Print the request and response for debugging
+
+        // Print the actual response body for debugging
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("Response Body: " + responseBody);
+
+        // Validate the response JSON
+        try {
+            JSONAssert.assertEquals("{"
+                    + "\"id\": 1,"
+                    + "\"name\": \"Task 1\","
+                    + "\"description\": \"First task\","
+                    + "\"completed\": false"
+                    + "}", responseBody, false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }*/
 }
+
 
