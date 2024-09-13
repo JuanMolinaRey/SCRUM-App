@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     @JsonBackReference
-    private List<Task> tasks = new ArrayList<>();
+    private List<Task> tasks;
 
     @ManyToMany
     @JoinTable(
@@ -39,42 +38,73 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "project_id")
     )
     @JsonManagedReference
-    private List<Project> projectsList = new ArrayList<>();
+    private List<Project> projectsList;
 
-    public User() {
-    }
-
-    public User(Long id, String username, String email, String password, ERole role, List<Task> tasks, List<Project> projectsList) {
+    public User(Long id, List<Project> projectsList, List<Task> tasks, ERole role, String password, String email, String username) {
         this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
+        this.projectsList = projectsList;
+        this.tasks = tasks;
         this.role = role;
-        this.tasks = tasks != null ? tasks : new ArrayList<>();
-        this.projectsList = projectsList != null ? projectsList : new ArrayList<>();
+        this.password = password;
+        this.email = email;
+        this.username = username;
     }
 
-    public Long getId() {return id; }
-    public void setId(Long id) {this.id = id;}
+    public Long getId() {
+        return id;
+    }
 
-    public String getUsername() {return username;}
-    public void setUsername(String username) {this.username = username;}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getEmail() {return email;}
-    public void setEmail(String email) {this.email = email;}
+    public String getUsername() {
+        return username;
+    }
 
-    public String getPassword() {return password;}
-    public void setPassword(String password) {this.password = password;}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public ERole getRole() {return role;}
-    public void setRole(ERole role) {this.role = role;}
+    public String getEmail() {
+        return email;
+    }
 
-    public List<Task> getTasks() {return tasks;}
-    public void setTasks(List<Task> tasks) {this.tasks = tasks;}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public List<Project> getProjectsList() {return projectsList;}
-    public void setProjectsList(List<Project> projectsList) {this.projectsList = projectsList;}
+    public ERole getRole() {
+        return role;
+    }
 
+    public void setRole(ERole role) {
+        this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    public List<Project> getProjectsList() {
+        return projectsList;
+    }
+
+    public void setProjectsList(List<Project> projectsList) {
+        this.projectsList = projectsList;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -99,4 +129,60 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+public static Builder builder()
+    {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long id;
+        private String username;
+        private String email;
+        private String password;
+        private ERole role;
+        private List<Task> tasks;
+        private List<Project> projectsList;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder role(ERole role) {
+            this.role = role;
+            return this;
+        }
+
+        public Builder tasks(List<Task> tasks) {
+            this.tasks = tasks;
+            return this;
+        }
+
+        public Builder projectsList(List<Project> projectsList) {
+            this.projectsList = projectsList;
+            return this;
+        }
+
+        public User build() {
+            return new User(id, projectsList, tasks, role, password, email, username);
+
+        }
+    }
 }
+

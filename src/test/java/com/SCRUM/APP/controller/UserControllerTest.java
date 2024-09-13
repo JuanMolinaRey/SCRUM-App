@@ -38,7 +38,6 @@ class UserControllerTest {
         MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
 
-        user = new User();
         user.setId(1L);
         user.setUsername("john_doe");
         user.setEmail("john@example.com");
