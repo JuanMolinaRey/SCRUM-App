@@ -27,7 +27,6 @@ public class TaskConverter {
 
     public TaskDTO taskToDto(Task task) {
         TaskDTO taskDTO = modelMapper.map(task, TaskDTO.class);
-        // Manually set projectId and userId
         taskDTO.setProjectId(task.getProject() != null ? task.getProject().getId() : null);
         taskDTO.setUserId(task.getUser() != null ? task.getUser().getId() : null);
         return taskDTO;
@@ -38,15 +37,40 @@ public class TaskConverter {
 
         if (taskDTO.getProjectId() != null && projectService != null) {
             Optional<Project> optionalProject = projectService.getProjectById(taskDTO.getProjectId());
-            optionalProject.ifPresent(task::setProject); // Set the project if present
+            optionalProject.ifPresent(task::setProject);
         }
 
         if (taskDTO.getUserId() != null && userService != null) {
             Optional<User> optionalUser = userService.getUserById(taskDTO.getUserId());
-            optionalUser.ifPresent(task::setUser); // Set the user if present
+            optionalUser.ifPresent(task::setUser);
         }
 
         return task;
     }
+
+    public TaskDTOEntity taskToDtoEntity(Task task) {
+        TaskDTOEntity taskDTOEntity = modelMapper.map(task, TaskDTOEntity.class);
+
+        if (task.getProject() != null) {
+            taskToDtoEntity(task).setProject(task.getProject());
+        }
+        if (task.getUser() != null) {
+            taskToDtoEntity(task).setUser(task.getUser());
+        }
+        return taskDTOEntity;
+    }
+    public Task dtoEntityToTask(TaskDTOEntity taskDTOEntity) {
+        Task task = modelMapper.map(taskDTOEntity, Task.class);
+
+        if (taskDTOEntity.getProject() != null) {
+            task.setProject(taskDTOEntity.getProject());
+        }
+        if (taskDTOEntity.getUser() != null) {
+            task.setUser(taskDTOEntity.getUser());
+        }
+        return task;
+    }
+
+
 
 }
