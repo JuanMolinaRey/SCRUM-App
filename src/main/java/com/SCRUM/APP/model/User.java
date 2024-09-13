@@ -40,14 +40,14 @@ public class User implements UserDetails {
     @JsonManagedReference
     private List<Project> projectsList;
 
-    public User(Long id, List<Project> projectsList, List<Task> tasks, ERole role, String password, String email, String username) {
+    public User(Long id, String username, String email, String password, ERole role, List<Task> tasks, List<Project> projectsList) {
         this.id = id;
-        this.projectsList = projectsList;
-        this.tasks = tasks;
-        this.role = role;
-        this.password = password;
-        this.email = email;
         this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.tasks = tasks;
+        this.projectsList = projectsList;
     }
 
     public Long getId() {
@@ -180,7 +180,7 @@ public static Builder builder()
         }
 
         public User build() {
-            return new User(id, projectsList, tasks, role, password, email, username);
+            return new User(id, username, email, password, role, tasks, projectsList);
 
         }
     }

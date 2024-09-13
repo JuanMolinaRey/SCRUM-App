@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.SCRUM.APP.model.ERole.USER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -26,23 +27,26 @@ class UserControllerTest {
 
     @Mock
     private UserService userService;
-    private MockMvc mockMvc;
-    private User user;
-    private List<User> userList;
 
     @InjectMocks
     private UserController userController;
+
+    private MockMvc mockMvc;
+    private User user;
+    private List<User> userList;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
 
+        user = new User(1L, "john_doe","john@example.com","password",USER, null, null);
         user.setId(1L);
         user.setUsername("john_doe");
         user.setEmail("john@example.com");
         user.setPassword("password");
-        user.setRole(ERole.USER);
+        user.setRole(USER);
+
         userList = new ArrayList<>();
         userList.add(user);
     }
@@ -105,12 +109,13 @@ class UserControllerTest {
 
     @Test
     void testUpdateUser() throws Exception {
-        User updatedUser = new User();
+        User updatedUser = new User(1L, "john_doe","john@example.com","password",USER, null, null);
         updatedUser.setId(1L);
         updatedUser.setUsername("john_doe_updated");
         updatedUser.setEmail("john_updated@example.com");
         updatedUser.setPassword("new_password");
         updatedUser.setRole(ERole.ADMIN);
+
         when(userService.updateUser(anyLong(), any(User.class))).thenReturn(updatedUser);
 
         String userJson = "{"
@@ -135,5 +140,4 @@ class UserControllerTest {
         mockMvc.perform(delete("/api/v1/users/delete/1"))
                 .andExpect(status().isNoContent());
     }
-
 }

@@ -31,10 +31,12 @@ public class UserServiceTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
+    User user = new User(null,null, null, null, null, null, null);
+
 
     @Test
     public void testCreateUser() {
-        User user = new User();
+
         user.setPassword("password");
         when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
         when(iuserRepository.save(user)).thenReturn(user);
@@ -46,7 +48,7 @@ public class UserServiceTest {
 
     @Test
     public void testGetAllUsers() {
-        User user = new User();
+
         List<User> users = Collections.singletonList(user);
         when(iuserRepository.findAll()).thenReturn(users);
 
@@ -58,7 +60,7 @@ public class UserServiceTest {
 
     @Test
     public void testGetUserById() {
-        User user = new User();
+
         when(iuserRepository.findById(1L)).thenReturn(Optional.of(user));
 
         Optional<User> result = userService.getUserById(1L);
@@ -69,12 +71,12 @@ public class UserServiceTest {
 
     @Test
     public void testUpdateUser() {
-        User existingUser = new User();
+        User existingUser = new User(null,null, null, null, null, null, null );
         existingUser.setId(1L);
         existingUser.setUsername("oldUsername");
         when(iuserRepository.findById(1L)).thenReturn(Optional.of(existingUser));
 
-        User updatedUser = new User();
+        User updatedUser = new User(null,null, null, null, null, null, null );
         updatedUser.setUsername("NewUsername");
         updatedUser.setPassword("NewPassword");
         when(passwordEncoder.encode("NewPassword")).thenReturn("NewPassword");
