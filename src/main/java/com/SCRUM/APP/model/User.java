@@ -105,6 +105,7 @@ public class User implements UserDetails {
     public void setProjectsList(List<Project> projectsList) {
         this.projectsList = projectsList;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -129,4 +130,60 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+public static Builder builder()
+    {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long id;
+        private String username;
+        private String email;
+        private String password;
+        private ERole role;
+        private List<Task> tasks;
+        private List<Project> projectsList;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder role(ERole role) {
+            this.role = role;
+            return this;
+        }
+
+        public Builder tasks(List<Task> tasks) {
+            this.tasks = tasks;
+            return this;
+        }
+
+        public Builder projectsList(List<Project> projectsList) {
+            this.projectsList = projectsList;
+            return this;
+        }
+
+        public User build() {
+            return new User(id, projectsList, tasks, role, password, email, username);
+
+        }
+    }
 }
+
