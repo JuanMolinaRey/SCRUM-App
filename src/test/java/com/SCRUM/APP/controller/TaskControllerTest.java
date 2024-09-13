@@ -149,6 +149,40 @@ class TaskControllerTest {
                     JSONAssert.assertEquals(new ObjectMapper().writeValueAsString(taskDTO1), responseBody, false);
                 });
     }
+    @Test
+    void getCompletedTasks() throws Exception {
+        when(taskService.getCompletedTasks()).thenReturn(List.of(task2));
+        when(taskConverter.taskToDto(any(Task.class))).thenReturn(taskDTO2);
+
+        mockController.perform(get("/api/v1/tasks/completed")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    String responseBody = result.getResponse().getContentAsString();
+                    System.out.println("Response Body: " + responseBody);
+                    JSONAssert.assertEquals(new ObjectMapper().writeValueAsString(List.of(taskDTO2)), responseBody, false);
+                });
+
+        verify(taskService).getCompletedTasks();
+    }
+
+    @Test
+    void getNotCompletedTasks() throws Exception {
+        when(taskService.getNotCompletedTasks()).thenReturn(List.of(task1));
+        when(taskConverter.taskToDto(any(Task.class))).thenReturn(taskDTO1);
+
+        mockController.perform(get("/api/v1/tasks/not_completed")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    String responseBody = result.getResponse().getContentAsString();
+                    System.out.println("Response Body: " + responseBody);
+                    JSONAssert.assertEquals(new ObjectMapper().writeValueAsString(List.of(taskDTO1)), responseBody, false);
+                });
+
+        verify(taskService).getNotCompletedTasks();
+    }
+
 
     @Test
     void updateTask() throws Exception {
@@ -159,7 +193,6 @@ class TaskControllerTest {
                 + "\"completed\": true"
                 + "}";
 
-        // Mock the TaskConverter to return the updated TaskDTO
         when(taskConverter.dtoToTask(any(TaskDTO.class))).thenReturn(task2);
 
         mockController.perform(put("/api/v1/tasks/task/2")
@@ -178,27 +211,23 @@ class TaskControllerTest {
     }
     @Test
     void deleteTaskById() throws Exception {
-        // Configure the service method to do nothing
         doNothing().when(taskService).deleteTaskById(anyLong());
 
         mockController.perform(delete("/api/v1/tasks/task/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        // Verify that the service method was called
         verify(taskService).deleteTaskById(1L);
     }
 
     @Test
     void deleteAllTasks() throws Exception {
-        // Configure the service method to do nothing
         doNothing().when(taskService).deleteAllTasks();
 
         mockController.perform(delete("/api/v1/tasks")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        // Verify that the service method was called
         verify(taskService).deleteAllTasks();
     }
 }

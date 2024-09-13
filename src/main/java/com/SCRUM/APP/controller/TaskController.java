@@ -68,7 +68,6 @@ public class TaskController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(notCompletedTaskDTOs);
     }
-
     @PutMapping("/task/{id}")
     public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id, @RequestBody TaskDTO taskDTO) {
         Task task = taskConverter.dtoToTask(taskDTO);
@@ -82,7 +81,6 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
     @DeleteMapping("/task/{id}")
     public ResponseEntity<Void> deleteTaskById(@PathVariable Long id){
         taskService.deleteTaskById(id);
