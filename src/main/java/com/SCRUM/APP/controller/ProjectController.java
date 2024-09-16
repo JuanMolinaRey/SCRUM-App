@@ -3,6 +3,7 @@ package com.SCRUM.APP.controller;
 
 import com.SCRUM.APP.model.Project;
 import com.SCRUM.APP.service.ProjectService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class ProjectController {
         return projectService.getProjectById(id);
     }
 
-    @GetMapping("/list/{completed}")
+    @GetMapping("/list/completed/{completed}")
     public ResponseEntity<List<Project>> getProjectsByCompletedStatus(@PathVariable boolean completed) {
         List<Project> projects = projectService.getProjectsByCompletedStatus(completed);
         if (projects.isEmpty()) {
@@ -43,8 +44,8 @@ public class ProjectController {
     }
 
     @PostMapping(path ="/create")
-    public Project addProject(@RequestBody Project newProject){
-        return projectService.saveProject(newProject);
+    public Project createProject(@RequestBody Project newProject){
+        return projectService.createProject(newProject);
     }
 
     @PutMapping(path ="/update/{id}")

@@ -30,12 +30,14 @@ public class ProjectService {
         return iProjectRepository.findByCompleted(completed);
     }
 
-    public Project saveProject(Project newProject){
+    public Project createProject(Project newProject){
         return iProjectRepository.save(newProject);
     }
+
     public void updateProject(Project project){
         iProjectRepository.save(project);
     }
+
     public String deleteProject(Long id){
         try{
             iProjectRepository.deleteById(id);
