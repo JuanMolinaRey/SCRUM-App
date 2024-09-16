@@ -34,7 +34,7 @@ public class TaskController {
         return taskConverter.taskToDto(createdTask);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<TaskDTO> getAllTasks() {
         List<Task> tasks = taskService.getAllTasks();
         return tasks.stream()
@@ -72,7 +72,7 @@ public class TaskController {
         return ResponseEntity.ok(notCompletedTaskDTOs);
     }
 
-    @PutMapping("/task/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id, @RequestBody TaskDTO taskDTO) {
         Task task = taskConverter.dtoToTask(taskDTO);
         task.setId(id);
@@ -86,13 +86,13 @@ public class TaskController {
         }
     }
 
-    @DeleteMapping("/task/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteTaskById(@PathVariable Long id) {
         taskService.deleteTaskById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete/all")
     public ResponseEntity<Void> deleteAllCourses() {
         taskService.deleteAllTasks();
         return ResponseEntity.noContent().build();
