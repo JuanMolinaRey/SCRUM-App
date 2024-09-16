@@ -13,8 +13,6 @@ import org.mockito.MockitoAnnotations;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
@@ -25,35 +23,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.SCRUM.APP.dtos.task.TaskConverter;
 import com.SCRUM.APP.dtos.task.TaskDTO;
-import com.SCRUM.APP.model.Task;
-import com.SCRUM.APP.service.TaskService;
-import org.json.JSONException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 class TaskControllerTest {
@@ -132,7 +107,7 @@ class TaskControllerTest {
     }
     @Test
     void getAllTasks() throws Exception {
-        mockController.perform(get("/api/v1/tasks")
+        mockController.perform(get("/api/v1/tasks/all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
@@ -191,15 +166,15 @@ class TaskControllerTest {
     @Test
     void updateTask() throws Exception {
         String updatedTaskJson = "{"
-                + "\"id\": 2,"
-                + "\"name\": \"Updated Task 2\","
-                + "\"description\": \"Updated description\","
-                + "\"completed\": true"
+                + "\"id\": 1,"
+                + "\"name\": \"Task 1\","
+                + "\"description\": \"First task\","
+                + "\"completed\": false"
                 + "}";
 
         when(taskConverter.dtoToTask(any(TaskDTO.class))).thenReturn(task2);
 
-        mockController.perform(put("/api/v1/tasks/task/2")
+        mockController.perform(put("/api/v1/tasks/update/2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedTaskJson))
                 .andExpect(status().isOk())
@@ -217,7 +192,7 @@ class TaskControllerTest {
     void deleteTaskById() throws Exception {
         doNothing().when(taskService).deleteTaskById(anyLong());
 
-        mockController.perform(delete("/api/v1/tasks/task/1")
+        mockController.perform(delete("/api/v1/tasks/delete/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -228,7 +203,7 @@ class TaskControllerTest {
     void deleteAllTasks() throws Exception {
         doNothing().when(taskService).deleteAllTasks();
 
-        mockController.perform(delete("/api/v1/tasks")
+        mockController.perform(delete("/api/v1/tasks/delete/all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
