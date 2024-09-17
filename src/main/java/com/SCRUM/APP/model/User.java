@@ -27,16 +27,16 @@ public class User implements UserDetails {
     private ERole role;
 
     @OneToMany(mappedBy = "user")
-    @JsonBackReference
+    @JsonBackReference(value="user-task")
     private List<Task> tasks;
 
-      @ManyToMany
+    @ManyToMany
     @JoinTable(
             name = "User_Project",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id")
     )
-    @JsonManagedReference
+    @JsonBackReference(value="user-project")
     private List<Project> projectsList;
 
     public User() {

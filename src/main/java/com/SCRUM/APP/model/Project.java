@@ -1,6 +1,7 @@
 package com.SCRUM.APP.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -22,11 +23,11 @@ public class Project {
     private boolean completed;
 
     @OneToMany(mappedBy = "project")
-    @JsonBackReference
+    @JsonBackReference(value="task-project")
     private List<Task> tasks;
 
     @ManyToMany(mappedBy = "projectsList")
-    @JsonBackReference
+    @JsonManagedReference(value="user-project")
     private List<User> usersList;
 
     public Project() {

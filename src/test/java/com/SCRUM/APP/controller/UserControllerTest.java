@@ -71,6 +71,7 @@ class UserControllerTest {
                         + "}"));
     }
 
+
     @Test
     void testGetAllUsers() throws Exception {
         when(userService.getAllUsers()).thenReturn(userList);
