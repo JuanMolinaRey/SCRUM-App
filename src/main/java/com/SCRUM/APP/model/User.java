@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "User")
+@Table(name = "user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class User implements UserDetails {
 
     @Id
@@ -20,7 +20,6 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String username;
-
     private String email;
     private String password;
 
@@ -31,7 +30,7 @@ public class User implements UserDetails {
     @JsonBackReference
     private List<Task> tasks;
 
-    @ManyToMany
+      @ManyToMany
     @JoinTable(
             name = "User_Project",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -40,14 +39,17 @@ public class User implements UserDetails {
     @JsonManagedReference
     private List<Project> projectsList;
 
-    public User(Long id, List<Project> projectsList, List<Task> tasks, ERole role, String password, String email, String username) {
+    public User() {
+    }
+
+    public User(Long id, String username, String email, String password, ERole role, List<Task> tasks, List<Project> projectsList) {
         this.id = id;
-        this.projectsList = projectsList;
-        this.tasks = tasks;
-        this.role = role;
-        this.password = password;
-        this.email = email;
         this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.tasks = tasks;
+        this.projectsList = projectsList;
     }
 
     public Long getId() {
@@ -105,6 +107,7 @@ public class User implements UserDetails {
     public void setProjectsList(List<Project> projectsList) {
         this.projectsList = projectsList;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -128,5 +131,58 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long id;
+        private String username;
+        private String email;
+        private String password;
+        private ERole role;
+        private List<Task> tasks;
+        private List<Project> projectsList;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder role(ERole role) {
+            this.role = role;
+            return this;
+        }
+
+        public Builder tasks(List<Task> tasks) {
+            this.tasks = tasks;
+            return this;
+        }
+
+        public Builder projectsList(List<Project> projectsList) {
+            this.projectsList = projectsList;
+            return this;
+        }
+
+        public User build() {
+            return new User(id, username, email, password, role, tasks, projectsList);
+        }
     }
 }
