@@ -36,8 +36,10 @@ public class TaskConverter {
         Task task = modelMapper.map(taskDTO, Task.class);
 
         if (taskDTO.getProjectId() != null && projectService != null) {
-            Optional<Project> optionalProject = projectService.getProjectById(taskDTO.getProjectId());
-            optionalProject.ifPresent(task::setProject);
+            Project project = projectService.getProjectById(taskDTO.getProjectId());
+            if (project != null) {
+                task.setProject(project);
+            }
         }
 
         if (taskDTO.getUserId() != null && userService != null) {
