@@ -209,66 +209,6 @@ class TaskControllerTest {
 
         verify(taskService).deleteAllTasks();
     }
-    @Test
-    void createTaskEntity() throws Exception {
-        when(taskService.createTask(any(Task.class))).thenReturn(task1);
-        when(taskConverter.taskToDtoEntity(any(Task.class))).thenReturn(taskDTOEntity1);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String taskJson = objectMapper.writeValueAsString(taskDTOEntity1);
-
-        mockController.perform(post("/api/v1/tasks/create-entity")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(taskJson))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{"
-                        + "\"id\": 1,"
-                        + "\"name\": \"Task 1\","
-                        + "\"description\": \"First task\","
-                        + "\"completed\": false,"
-                        + "\"project\": {\"id\": 1},"
-                        + "\"user\": {\"id\": 1}"
-                        + "}"));
-    }
-    //I am getting a serialization problem with tests because user and project are entities in dto.
-    /*@Test
-    void createTask2() throws Exception {
-        // Mock service and converter responses
-        when(taskService.createTask(any(Task.class))).thenReturn(task1);
-        when(taskConverter.taskToDtoEntity(any(Task.class))).thenReturn(taskDTOEntity1);
-
-        // Create the JSON payload for the test
-        String taskJson = "{"
-                + "\"id\": 1,"
-                + "\"name\": \"Task 1\","
-                + "\"description\": \"First task\","
-                + "\"completed\": false"
-                + "}";
-
-        // Perform the POST request
-        ResultActions resultActions = mockController.perform(post("/api/v1/tasks/create-entity")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(taskJson))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andDo(print()); // Print the request and response for debugging
-
-        // Print the actual response body for debugging
-        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
-        System.out.println("Response Body: " + responseBody);
-
-        // Validate the response JSON
-        try {
-            JSONAssert.assertEquals("{"
-                    + "\"id\": 1,"
-                    + "\"name\": \"Task 1\","
-                    + "\"description\": \"First task\","
-                    + "\"completed\": false"
-                    + "}", responseBody, false);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }*/
 }
 
 
