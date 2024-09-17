@@ -10,7 +10,4 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public interface ITaskRepository extends JpaRepository<Task, Long> {
-    public List<Task> getCompletedTasks();
-    public List<Task> getNotCompletedTasks();
-    public boolean updateStatusAsPast(Long id);
 }
