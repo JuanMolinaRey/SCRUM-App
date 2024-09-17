@@ -1,37 +1,25 @@
-package com.SCRUM.APP.model;
+package com.SCRUM.APP.dtos.task;
 
+import com.SCRUM.APP.model.Project;
+import com.SCRUM.APP.model.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
 
-@Entity
-@Table(name = "Task")
-public class Task {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+public class TaskDTOEntity {
+
     private Long id;
-
-    @Column(name = "Name")
     private String name;
-
-    @Column(name = "Description")
     private String description;
-
-    @Column(name = "Completed")
     private boolean completed;
-
-    @ManyToOne
-    @JoinColumn(name = "project_id")
     @JsonManagedReference
     private Project project;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
     @JsonManagedReference
     private User user;
 
-    public Task(Long id, String name, String description, boolean completed, Project project, User user) {
+    public TaskDTOEntity() {
+    }
+
+    public TaskDTOEntity(Long id, String name, String description, boolean completed, Project project, User user) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -56,20 +44,20 @@ public class Task {
         this.name = name;
     }
 
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
     public Project getProject() {
