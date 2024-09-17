@@ -3,6 +3,7 @@ package com.SCRUM.APP.controller;
 import com.SCRUM.APP.model.ERole;
 import com.SCRUM.APP.model.User;
 import com.SCRUM.APP.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,103 +31,64 @@ class UserControllerTest {
     @InjectMocks
     private UserController userController;
 
-    private MockMvc mockController;
-    private User user;
-    private List<User> userList;
+    private MockMvc mockMvc;
+
+    private User user1;
+    private User user2;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockController = MockMvcBuilders.standaloneSetup(userController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
 
-        user = new User(1L, "john_doe","john@example.com","password",USER, null, null);
-        userList = new ArrayList<>();
-        userList.add(user);
+        user1 = new User(1L, "User1", "user1@example.com", "password1", USER, null, null);
+        user2 = new User(2L, "User2", "user2@example.com", "password2", USER, null, null);
     }
 
     @Test
-    void testCreateUser() throws Exception {
-        when(userService.createUser(any(User.class))).thenReturn(user);
+    void createUser() throws Exception {
+        when(userService.createUser(any(User.class))).thenReturn(user1);
 
-        String userJson = "{"
-                + "\"id\": 1,"
-                + "\"username\": \"john_doe\","
-                + "\"email\": \"john@example.com\","
-                + "\"password\": \"password\","
-                + "\"role\": \"USER\""
-                + "}";
+        String userJson = new ObjectMapper().writeValueAsString(user1);
 
-        mockController
-                .perform(post("/api/v1/users/create")
+        mockMvc.perform(post("/api/v1/users/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isCreated())
-                .andExpect(content().json("{"
-                        + "\"id\": 1,"
-                        + "\"username\": \"john_doe\","
-                        + "\"email\": \"john@example.com\","
-                        + "\"password\": \"password\","
-                        + "\"role\": \"USER\""
-                        + "}"));
+                .andExpect(content().json(userJson));
     }
 
     @Test
-    void testGetAllUsers() throws Exception {
-        when(userService.getAllUsers()).thenReturn(userList);
+    void getAllUsers() throws Exception {
+        when(userService.getAllUsers()).thenReturn(List.of(user1, user2));
 
-        String userJson = "["
-                + "{"
-                + "\"id\": 1,"
-                + "\"username\": \"john_doe\","
-                + "\"email\": \"john@example.com\","
-                + "\"password\": \"password\","
-                + "\"role\": \"USER\""
-                + "}]";
+        String usersJson = new ObjectMapper().writeValueAsString(List.of(user1, user2));
 
-        mockController.perform(get("/api/v1/users/list")
+        mockMvc.perform(get("/api/v1/users/list")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(usersJson));
+    }
+
+    @Test
+    void getUserById() throws Exception {
+        when(userService.getUserById(anyLong())).thenReturn(Optional.of(user1));
+
+        String userJson = new ObjectMapper().writeValueAsString(user1);
+
+        mockMvc.perform(get("/api/v1/users/list/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(userJson));
     }
 
     @Test
-    void testGetUserById() throws Exception {
-        when(userService.getUserById(anyLong())).thenReturn(Optional.of(user));
+    void updateUser() throws Exception {
+        when(userService.updateUser(anyLong(), any(User.class))).thenReturn(user1);
 
-        String userJson = "{"
-                + "\"id\": 1,"
-                + "\"username\": \"john_doe\","
-                + "\"email\": \"john@example.com\","
-                + "\"password\": \"password\","
-                + "\"role\": \"USER\""
-                + "}";
+        String userJson = new ObjectMapper().writeValueAsString(user1);
 
-        mockController.perform(get("/api/v1/users/list/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(userJson));
-    }
-
-    @Test
-    void testUpdateUser() throws Exception {
-        User updatedUser = new User(1L, "john_doe","john@example.com","password",USER, null, null);
-        updatedUser.setId(1L);
-        updatedUser.setUsername("john_doe_updated");
-        updatedUser.setEmail("john_updated@example.com");
-        updatedUser.setPassword("new_password");
-        updatedUser.setRole(ERole.ADMIN);
-
-        when(userService.updateUser(anyLong(), any(User.class))).thenReturn(updatedUser);
-
-        String userJson = "{"
-                + "\"id\": 1,"
-                + "\"username\": \"john_doe_updated\","
-                + "\"email\": \"john_updated@example.com\","
-                + "\"password\": \"new_password\","
-                + "\"role\": \"ADMIN\""
-                + "}";
-
-        mockController.perform(put("/api/v1/users/update/1")
+        mockMvc.perform(put("/api/v1/users/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isOk())
@@ -135,10 +96,13 @@ class UserControllerTest {
     }
 
     @Test
-    void testDeleteUser() throws Exception {
+    void deleteUser() throws Exception {
         doNothing().when(userService).deleteUser(anyLong());
 
-        mockController.perform(delete("/api/v1/users/delete/1"))
+        mockMvc.perform(delete("/api/v1/users/delete/1")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+
+        verify(userService).deleteUser(1L);
     }
 }
