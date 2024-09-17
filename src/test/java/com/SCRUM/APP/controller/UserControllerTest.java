@@ -31,22 +31,16 @@ class UserControllerTest {
     @InjectMocks
     private UserController userController;
 
-    private MockMvc mockMvc;
+    private MockMvc mockController;
     private User user;
     private List<User> userList;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+        mockController = MockMvcBuilders.standaloneSetup(userController).build();
 
         user = new User(1L, "john_doe","john@example.com","password",USER, null, null);
-        user.setId(1L);
-        user.setUsername("john_doe");
-        user.setEmail("john@example.com");
-        user.setPassword("password");
-        user.setRole(USER);
-
         userList = new ArrayList<>();
         userList.add(user);
     }
@@ -63,11 +57,18 @@ class UserControllerTest {
                 + "\"role\": \"USER\""
                 + "}";
 
-        mockMvc.perform(post("/api/v1/users/create")
+        mockController
+                .perform(post("/api/v1/users/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isCreated())
-                .andExpect(content().json(userJson));
+                .andExpect(content().json("{"
+                        + "\"id\": 1,"
+                        + "\"username\": \"john_doe\","
+                        + "\"email\": \"john@example.com\","
+                        + "\"password\": \"password\","
+                        + "\"role\": \"USER\""
+                        + "}"));
     }
 
     @Test
@@ -83,7 +84,7 @@ class UserControllerTest {
                 + "\"role\": \"USER\""
                 + "}]";
 
-        mockMvc.perform(get("/api/v1/users/list")
+        mockController.perform(get("/api/v1/users/list")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(userJson));
@@ -101,7 +102,7 @@ class UserControllerTest {
                 + "\"role\": \"USER\""
                 + "}";
 
-        mockMvc.perform(get("/api/v1/users/list/1")
+        mockController.perform(get("/api/v1/users/list/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(userJson));
@@ -126,7 +127,7 @@ class UserControllerTest {
                 + "\"role\": \"ADMIN\""
                 + "}";
 
-        mockMvc.perform(put("/api/v1/users/update/1")
+        mockController.perform(put("/api/v1/users/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isOk())
@@ -137,7 +138,7 @@ class UserControllerTest {
     void testDeleteUser() throws Exception {
         doNothing().when(userService).deleteUser(anyLong());
 
-        mockMvc.perform(delete("/api/v1/users/delete/1"))
+        mockController.perform(delete("/api/v1/users/delete/1"))
                 .andExpect(status().isNoContent());
     }
 }

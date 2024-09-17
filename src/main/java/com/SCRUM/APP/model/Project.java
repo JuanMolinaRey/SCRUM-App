@@ -29,6 +29,9 @@ public class Project {
     @JsonBackReference
     private List<User> usersList;
 
+    public Project() {
+    }
+
     public Project(long id, String name, String description, boolean completed, List<Task> tasks, List<User> usersList) {
         this.id = id;
         this.name = name;
@@ -86,4 +89,3 @@ public class Project {
         this.usersList = usersList;
     }
 }
-

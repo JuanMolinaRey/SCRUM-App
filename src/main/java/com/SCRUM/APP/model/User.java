@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "User")
+@Table(name = "user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class User implements UserDetails {
 
     @Id
@@ -20,7 +20,6 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String username;
-
     private String email;
     private String password;
 
@@ -31,7 +30,7 @@ public class User implements UserDetails {
     @JsonBackReference
     private List<Task> tasks;
 
-    @ManyToMany
+      @ManyToMany
     @JoinTable(
             name = "User_Project",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -39,6 +38,9 @@ public class User implements UserDetails {
     )
     @JsonManagedReference
     private List<Project> projectsList;
+
+    public User() {
+    }
 
     public User(Long id, String username, String email, String password, ERole role, List<Task> tasks, List<Project> projectsList) {
         this.id = id;
@@ -105,6 +107,7 @@ public class User implements UserDetails {
     public void setProjectsList(List<Project> projectsList) {
         this.projectsList = projectsList;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -130,8 +133,7 @@ public class User implements UserDetails {
         return true;
     }
 
-public static Builder builder()
-    {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -181,8 +183,6 @@ public static Builder builder()
 
         public User build() {
             return new User(id, username, email, password, role, tasks, projectsList);
-
         }
     }
 }
-

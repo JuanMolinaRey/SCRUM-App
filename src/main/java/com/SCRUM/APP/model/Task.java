@@ -30,6 +30,9 @@ public class Task {
     @JsonManagedReference
     private User user;
 
+    public Task() {
+    }
+
     public Task(long id, String name, String description, boolean completed, Project project, User user) {
         this.id = id;
         this.name = name;
@@ -55,20 +58,20 @@ public class Task {
         this.name = name;
     }
 
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
     public Project getProject() {
