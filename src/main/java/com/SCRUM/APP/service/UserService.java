@@ -44,7 +44,7 @@ public class UserService {
                     user.setPassword(userDetails.getPassword());
                     user.setRole(userDetails.getRole());
                     user.setTasks(userDetails.getTasks());
-                    user.setProjectsList(userDetails.getProjectsList());
+                    //user.setProjectsList(userDetails.getProjectsList());
                     return iuserRepository.save(user);
                 })
                 .orElseThrow(() -> new RuntimeException("User not found with id " + id));

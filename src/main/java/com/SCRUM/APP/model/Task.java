@@ -23,18 +23,18 @@ public class Task {
     @Column(name = "Completed")
     private boolean completed;
 
+    @JsonBackReference("project-task")
     @ManyToOne
     @JoinColumn(name = "project_id")
-    @JsonBackReference
+
     private Project project;
 
     public Task() {
     }
 
-
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
     private User user;
 
     public Task(Long id, String name, String description, boolean completed, Project project, User user) {

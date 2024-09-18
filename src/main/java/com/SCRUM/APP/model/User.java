@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
@@ -29,17 +30,17 @@ public class User implements UserDetails {
     private ERole role;
 
     @OneToMany(mappedBy = "user")
-    @JsonBackReference
+    @JsonManagedReference
     private List<Task> tasks;
 
-      @ManyToMany
+    @ManyToMany
     @JoinTable(
             name = "User_Project",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id")
     )
-      @JsonBackReference
-    private List<Project> projectsList;
+    //@JsonBackReference(value ="user-project")
+    private Set<Project> projectsList;
 
     public User() {
     }
@@ -51,7 +52,7 @@ public class User implements UserDetails {
         this.password = password;
         this.role = role;
         this.tasks = tasks;
-        this.projectsList = projectsList;
+        //this.projectsList = projectsList;
     }
 
     public Long getId() {
@@ -102,13 +103,13 @@ public class User implements UserDetails {
         this.tasks = tasks;
     }
 
-    public List<Project> getProjectsList() {
-        return projectsList;
-    }
+//    public List<Project> getProjectsList() {
+//        return projectsList;
+//    }
 
-    public void setProjectsList(List<Project> projectsList) {
-        this.projectsList = projectsList;
-    }
+//    public void setProjectsList(List<Project> projectsList) {
+//        this.projectsList = projectsList;
+//    }
 
     @Override
     @JsonIgnore

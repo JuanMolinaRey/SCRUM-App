@@ -30,7 +30,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 .requestMatchers("/api/auth/login").permitAll()
-                                .requestMatchers("/api/auth/register").hasAuthority("ADMIN")
+                                .requestMatchers("/api/auth/register").permitAll()
                                 .requestMatchers("/api/v1/tasks/create").hasAuthority("MANAGER")
                                 .requestMatchers("/api/v1/tasks/all").hasAnyAuthority("ADMIN", "MANAGER")
                                 .requestMatchers("/api/v1/tasks/task/{id}").permitAll()
