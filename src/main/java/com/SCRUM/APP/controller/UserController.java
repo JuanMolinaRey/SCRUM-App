@@ -21,7 +21,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping(path="/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path="/create", consumes = {"application/json"})
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);

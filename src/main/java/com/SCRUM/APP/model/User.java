@@ -1,8 +1,6 @@
 package com.SCRUM.APP.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Table(name = "user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class User implements UserDetails {
 
@@ -28,8 +27,7 @@ public class User implements UserDetails {
     private ERole role;
 
     @OneToMany(mappedBy = "user")
-    //@JsonBackReference(value="user-task")
-    @JsonIgnoreProperties
+    @JsonManagedReference(value="user-task")
     private List<Task> tasks;
 
     @ManyToMany
@@ -38,7 +36,8 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id")
     )
-    @JsonIgnoreProperties
+    @JsonBackReference(value="user-project")
+    //@JsonIgnoreProperties
     private List<Project> projectsList;
 
     public User() {
@@ -111,6 +110,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }

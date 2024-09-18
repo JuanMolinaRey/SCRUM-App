@@ -21,8 +21,8 @@ public class TaskDTO {
         this.name = name;
         this.description = description;
         this.completed = completed;
-        this.projectId = projectId;
-        this.userId = userId;
+        this.projectId = project.getId();
+        this.userId = user.getId();
     }
 
     public Long getId() {

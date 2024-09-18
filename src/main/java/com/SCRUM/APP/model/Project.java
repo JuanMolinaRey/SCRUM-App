@@ -1,12 +1,11 @@
 package com.SCRUM.APP.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Table(name = "Project")
 public class Project {
 
@@ -24,13 +23,16 @@ public class Project {
     private boolean completed;
 
     @OneToMany(mappedBy = "project")
-    //@JsonBackReference(value="task-project")
-    @JsonIgnoreProperties
+    @JsonManagedReference(value="project-task")
     private List<Task> tasks;
 
     @ManyToMany(mappedBy = "projectsList")
     //@JsonManagedReference(value="user-project")
+    //@JsonIgnoreProperties
     private List<User> usersList;
+
+    public Project() {
+    }
 
     public Project(Long id, String name, String description, boolean completed, List<Task> tasks, List<User> usersList) {
         this.id = id;
@@ -89,4 +91,3 @@ public class Project {
         this.usersList = usersList;
     }
 }
-

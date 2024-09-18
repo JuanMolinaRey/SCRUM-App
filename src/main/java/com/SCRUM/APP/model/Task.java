@@ -25,14 +25,16 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "project_id")
-    //@JsonManagedReference(value="task-project")
-    @JsonIgnoreProperties
+    @JsonBackReference(value="project-task")
     private Project project;
+
+    public Task() {
+    }
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    //@JsonBackReference(value="user-task")
-    @JsonIgnoreProperties
+    @JsonBackReference(value="user-task")
     private User user;
 
     public Task(Long id, String name, String description, boolean completed, Project project, User user) {

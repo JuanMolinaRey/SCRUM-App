@@ -15,6 +15,8 @@ public class RegisterRequest {
         this.username = username;
         this.role = role;
     }
+    public RegisterRequest() {
+    }
 
     public String getUsername() {
         return username;

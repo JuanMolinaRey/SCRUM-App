@@ -44,7 +44,7 @@ public class ProjectController {
         }
     }
 
-    @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path ="/create", consumes = {"application/json"})
     public Project createProject(@RequestBody Project newProject){
         return projectService.createProject(newProject);
     }
