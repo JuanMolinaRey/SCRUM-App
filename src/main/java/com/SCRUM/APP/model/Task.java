@@ -1,6 +1,7 @@
 package com.SCRUM.APP.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -24,12 +25,14 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "project_id")
-    @JsonManagedReference(value="task-project")
+    //@JsonManagedReference(value="task-project")
+    @JsonIgnoreProperties
     private Project project;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference(value="user-task")
+    //@JsonBackReference(value="user-task")
+    @JsonIgnoreProperties
     private User user;
 
     public Task(Long id, String name, String description, boolean completed, Project project, User user) {

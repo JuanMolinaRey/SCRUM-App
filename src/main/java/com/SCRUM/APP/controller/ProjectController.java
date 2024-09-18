@@ -4,6 +4,7 @@ package com.SCRUM.APP.controller;
 import com.SCRUM.APP.model.Project;
 import com.SCRUM.APP.service.ProjectService;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +44,7 @@ public class ProjectController {
         }
     }
 
-    @PostMapping(path ="/create")
+    @PostMapping(path ="/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Project createProject(@RequestBody Project newProject){
         return projectService.createProject(newProject);
     }

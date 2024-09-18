@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("api/v1/tasks")
+@RequestMapping("/api/v1/tasks")
 public class TaskController {
 
     private final TaskService taskService;

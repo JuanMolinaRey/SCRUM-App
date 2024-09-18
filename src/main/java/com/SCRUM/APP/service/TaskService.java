@@ -25,7 +25,7 @@ public class TaskService {
         try {
             return taskRepository.findAll();
         } catch (Exception e) {
-            throw new RuntimeException("Error retrieving all users");
+            throw new RuntimeException("Error retrieving all tasks");
         }
     }
 
@@ -34,7 +34,7 @@ public class TaskService {
             return taskRepository.findById(id);
 
         } catch (Exception e) {
-            throw new RuntimeException("Error retrieving user by id");
+            throw new RuntimeException("Error retrieving task by id");
         }
     }
 

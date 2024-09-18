@@ -1,6 +1,7 @@
 package com.SCRUM.APP.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,7 +28,8 @@ public class User implements UserDetails {
     private ERole role;
 
     @OneToMany(mappedBy = "user")
-    @JsonBackReference(value="user-task")
+    //@JsonBackReference(value="user-task")
+    @JsonIgnoreProperties
     private List<Task> tasks;
 
     @ManyToMany
@@ -36,7 +38,7 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id")
     )
-    @JsonBackReference(value="user-project")
+    @JsonIgnoreProperties
     private List<Project> projectsList;
 
     public User() {
