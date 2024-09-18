@@ -1,4 +1,4 @@
-package com.SCRUM.APP.deserializer;
+package com.SCRUM.APP.service;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
