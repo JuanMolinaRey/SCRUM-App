@@ -23,12 +23,15 @@ public class Project {
     private boolean completed;
 
     @OneToMany(mappedBy = "project")
-    @JsonIgnoreProperties
+    @JsonBackReference
     private List<Task> tasks;
 
     @ManyToMany(mappedBy = "projectsList")
-    @JsonIgnoreProperties
+    @JsonBackReference
     private List<User> usersList;
+
+    public Project() {
+    }
 
     public Project(Long id, String name, String description, boolean completed, List<Task> tasks, List<User> usersList) {
         this.id = id;

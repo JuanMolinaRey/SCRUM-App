@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping(path ="/api/v1/projects")
+@RequestMapping("/api/v1/projects")
 public class ProjectController {
 
 

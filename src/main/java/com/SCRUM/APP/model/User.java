@@ -29,7 +29,7 @@ public class User implements UserDetails {
     private ERole role;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnoreProperties
+    @JsonBackReference
     private List<Task> tasks;
 
       @ManyToMany
@@ -38,7 +38,7 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id")
     )
-    @JsonIgnoreProperties
+      @JsonBackReference
     private List<Project> projectsList;
 
     public User() {
