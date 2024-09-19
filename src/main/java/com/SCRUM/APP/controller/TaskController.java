@@ -1,6 +1,5 @@
 package com.SCRUM.APP.controller;
 
-import com.SCRUM.APP.dtos.task.TaskDTOEntity; // DTO with full entities
 import com.SCRUM.APP.dtos.task.TaskConverter;
 import com.SCRUM.APP.dtos.task.TaskDTO;
 import com.SCRUM.APP.model.Task;
