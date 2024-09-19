@@ -46,7 +46,7 @@ class UserControllerTest {
     }
 
     @Test
-    void createUser() throws Exception {
+    void create_User() throws Exception {
         when(userService.createUser(any(User.class))).thenReturn(user1);
 
         String userJson = new ObjectMapper().writeValueAsString(user1);
@@ -59,7 +59,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getAllUsers() throws Exception {
+    void get_All_Users() throws Exception {
         when(userService.getAllUsers()).thenReturn(List.of(user1, user2));
 
         String usersJson = new ObjectMapper().writeValueAsString(List.of(user1, user2));
@@ -71,7 +71,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserById() throws Exception {
+    void get_User_By_Id() throws Exception {
         when(userService.getUserById(anyLong())).thenReturn(Optional.of(user1));
 
         String userJson = new ObjectMapper().writeValueAsString(user1);
@@ -83,7 +83,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUser() throws Exception {
+    void update_User() throws Exception {
         when(userService.updateUser(anyLong(), any(User.class))).thenReturn(user1);
 
         String userJson = new ObjectMapper().writeValueAsString(user1);
@@ -96,7 +96,7 @@ class UserControllerTest {
     }
 
     @Test
-    void deleteUser() throws Exception {
+    void delete_User() throws Exception {
         doNothing().when(userService).deleteUser(anyLong());
 
         mockMvc.perform(delete("/api/v1/users/delete/1")
