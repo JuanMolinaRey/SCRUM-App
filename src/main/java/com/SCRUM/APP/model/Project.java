@@ -1,8 +1,12 @@
 package com.SCRUM.APP.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Project")
@@ -10,7 +14,7 @@ public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(name = "Name")
     private String name;
@@ -22,12 +26,15 @@ public class Project {
     private boolean completed;
 
     @OneToMany(mappedBy = "project")
-    @JsonBackReference
+    @JsonManagedReference(value="project-task")
     private List<Task> tasks;
 
-    @ManyToMany(mappedBy = "projectsList")
-    @JsonBackReference
-    private List<User> usersList;
+    @ManyToMany
+    @JsonProperty("usersList")
+    private Set<User> usersList;
+
+    public Project() {
+    }
 
     public Project(Long id, String name, String description, boolean completed, List<Task> tasks, List<User> usersList) {
         this.id = id;
@@ -35,7 +42,7 @@ public class Project {
         this.description = description;
         this.completed = completed;
         this.tasks = tasks;
-        this.usersList = usersList;
+//        this.usersList = usersList;
     }
 
     public Long getId() {
@@ -78,12 +85,12 @@ public class Project {
         this.tasks = tasks;
     }
 
-    public List<User> getUsersList() {
-        return usersList;
-    }
-
-    public void setUsersList(List<User> usersList) {
-        this.usersList = usersList;
-    }
+//    public List<User> getUsersList() {
+//        return usersList;
+//    }
+//
+//    public void setUsersList(List<User> usersList) {
+//        this.usersList = usersList;
+//    }
 }
 

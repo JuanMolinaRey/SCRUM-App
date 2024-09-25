@@ -1,6 +1,8 @@
 package com.SCRUM.APP.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,9 +11,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "User")
+@Table(name = "user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class User implements UserDetails {
 
     @Id
@@ -20,7 +23,6 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String username;
-
     private String email;
     private String password;
 
@@ -28,7 +30,7 @@ public class User implements UserDetails {
     private ERole role;
 
     @OneToMany(mappedBy = "user")
-    @JsonBackReference
+    @JsonManagedReference
     private List<Task> tasks;
 
     @ManyToMany
@@ -37,17 +39,20 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id")
     )
-    @JsonManagedReference
-    private List<Project> projectsList;
+    //@JsonBackReference(value ="user-project")
+    private Set<Project> projectsList;
 
-    public User(Long id, List<Project> projectsList, List<Task> tasks, ERole role, String password, String email, String username) {
+    public User() {
+    }
+
+    public User(Long id, String username, String email, String password, ERole role, List<Task> tasks, List<Project> projectsList) {
         this.id = id;
-        this.projectsList = projectsList;
-        this.tasks = tasks;
-        this.role = role;
-        this.password = password;
-        this.email = email;
         this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.tasks = tasks;
+        //this.projectsList = projectsList;
     }
 
     public Long getId() {
@@ -98,15 +103,16 @@ public class User implements UserDetails {
         this.tasks = tasks;
     }
 
-    public List<Project> getProjectsList() {
-        return projectsList;
-    }
+//    public List<Project> getProjectsList() {
+//        return projectsList;
+//    }
 
-    public void setProjectsList(List<Project> projectsList) {
-        this.projectsList = projectsList;
-    }
+//    public void setProjectsList(List<Project> projectsList) {
+//        this.projectsList = projectsList;
+//    }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
@@ -131,8 +137,7 @@ public class User implements UserDetails {
         return true;
     }
 
-public static Builder builder()
-    {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -181,9 +186,7 @@ public static Builder builder()
         }
 
         public User build() {
-            return new User(id, projectsList, tasks, role, password, email, username);
-
+            return new User(id, username, email, password, role, tasks, projectsList);
         }
     }
 }
-
