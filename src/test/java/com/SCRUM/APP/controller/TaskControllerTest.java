@@ -46,8 +46,6 @@ class TaskControllerTest {
     private TaskDTO taskDTO1;
     private TaskDTO taskDTO2;
     private List<TaskDTO> taskList = new ArrayList<>();
-    private TaskDTOEntity taskDTOEntity1;
-    private TaskDTOEntity taskDTOEntity2;
 
     private Task task1;
     private Task task2;
@@ -64,8 +62,7 @@ class TaskControllerTest {
         task1 = new Task(1L, "Task 1", "First task", false, null, null);
         task2 = new Task(2L, "Task 2", "Second task", true, null, null);
         taskList = List.of(taskDTO1, taskDTO2);
-        taskDTOEntity1 = new TaskDTOEntity(1L, "Task 1", "First task", false, null, null);
-        taskDTOEntity2 = new TaskDTOEntity(2L, "Task 2", "Second task", true, null, null);
+
 
         when(taskConverter.dtoToTask(any(TaskDTO.class))).thenReturn(task1);
         when(taskService.createTask(any(Task.class))).thenReturn(task1);
